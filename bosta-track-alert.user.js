@@ -15,7 +15,7 @@
   console.log('[BostaTrackAlerts] started');
 
   const TRACKS = {
-    '23666480': '⚠️ اقفل DAMAGE'
+    '36783873': '⚠️ اقفل DAMAGE'
   };
 
   const BANNER_ID = 'bosta-track-alert-banner-v1';
@@ -143,6 +143,6 @@
     } catch (e) {
       console.warn('[BostaTrackAlerts] update check failed:', e);
     }
-  }, 60000); // كل دقيقة (60000 مللي ثانية)
+  }, 60000); // كل دقيقة (15000 مللي ثانية)
 
 })();
