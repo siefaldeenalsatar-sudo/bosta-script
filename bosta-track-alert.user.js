@@ -1,10 +1,10 @@
 // ==UserScript==
-// @name         Bosta Track Alerts (multi-track, robust SPA)
+// @name         Bosta Track Alerts (Auto Update from GitHub)
 // @namespace    http://tampermonkey.net/
 // @version      1.3
 // @updateURL    https://raw.githubusercontent.com/siefaldeenalsatar-sudo/bosta-track-alert/main/bosta-track-alert.user.js
 // @downloadURL  https://raw.githubusercontent.com/siefaldeenalsatar-sudo/bosta-track-alert/main/bosta-track-alert.user.js
-// @description  Shows alert banners for specified track IDs (works across SPA, subdomains, history changes). Add track->message in TRACKS map.
+// @description  Alerts for specific Bosta tracks + auto GitHub update check every minute
 // @match        https://*.bosta.co/*
 // @run-at       document-idle
 // @grant        none
@@ -14,7 +14,6 @@
   'use strict';
   console.log('[BostaTrackAlerts] started');
 
-  // --- CONFIG: أضف التراكات والرسائل اللي تريدها هنا ---
   const TRACKS = {
     '23666480': '⚠️ اقفل DAMAGE'
   };
@@ -127,5 +126,23 @@
   const interval = setInterval(runCheck, 2000);
 
   window._BostaTrackAlerts = { runCheck, findMatchingTrack, TRACKS };
+
+  // --- 🕒 التحقق من تحديث GitHub كل دقيقة ---
+  const GITHUB_URL = 'https://raw.githubusercontent.com/siefaldeenalsatar-sudo/bosta-track-alert/main/bosta-track-alert.user.js';
+  let lastVersion = '1.3';
+  setInterval(async () => {
+    try {
+      const res = await fetch(GITHUB_URL + '?_t=' + Date.now());
+      const text = await res.text();
+      const versionMatch = text.match(/@version\s+([\d.]+)/);
+      if (versionMatch && versionMatch[1] !== lastVersion) {
+        console.log(`[BostaTrackAlerts] Update detected: ${versionMatch[1]} (was ${lastVersion})`);
+        alert('⚙️ تم اكتشاف تحديث جديد للسكربت، سيتم التحديث الآن...');
+        location.reload(true);
+      }
+    } catch (e) {
+      console.warn('[BostaTrackAlerts] update check failed:', e);
+    }
+  }, 60000); // كل دقيقة (60000 مللي ثانية)
 
 })();
